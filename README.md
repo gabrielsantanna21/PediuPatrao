@@ -2,6 +2,27 @@
 
 Projeto Spring Boot 3.4 / Java 21, Thymeleaf e MongoDB. Esta versão amplia a aplicação com perfis, regras de pedidos e trilha de auditoria.
 
+## Dashboard administrativo (v1.1.0)
+Painel em `/dashboard` (perfis ADMIN e GERENTE) com indicadores de vendas, gráficos, situação dos pedidos, produtos mais vendidos e filtros, alimentado pela API `GET /api/dashboard/**`.
+
+- **Documentação completa** (requisitos, decisões de projeto, endpoints, evidências de testes): [`docs/DOCUMENTACAO.md`](docs/DOCUMENTACAO.md)
+- **Teste da API contra a aplicação rodando:** `./docs/testes/testar-api.sh`
+- **Roteiro do vídeo (3 min):** [`docs/ROTEIRO_VIDEO_DASHBOARD.md`](docs/ROTEIRO_VIDEO_DASHBOARD.md)
+- **Dados de demonstração:** inicie com `PEDIUPATRAO_DEMO_DATA=true` (só popula se não houver pedidos; cria `gerente`/`atendente` com senha `demo123`).
+
+| Endpoint | Finalidade |
+|---|---|
+| `GET /api/dashboard/resumo` | Indicadores gerais e comparativo com o período anterior |
+| `GET /api/dashboard/vendas/serie` | Evolução por dia/semana/mês |
+| `GET /api/dashboard/vendas/categorias` | Vendas por categoria |
+| `GET /api/dashboard/vendas/horarios` | Movimento por hora e dia da semana |
+| `GET /api/dashboard/pedidos/situacao` | Pedidos por status, em andamento e atrasados |
+| `GET /api/dashboard/pedidos/recentes` | Últimos pedidos |
+| `GET /api/dashboard/produtos/ranking` | Produtos mais vendidos |
+| `GET /api/dashboard/filtros` | Opções para os filtros |
+
+Filtros comuns: `inicio`, `fim` (AAAA-MM-DD), `status`, `categoria`, `produto`.
+
 ## Requisitos
 - Java 21
 - MongoDB local (ou uma instância MongoDB acessível)
@@ -32,6 +53,7 @@ As regras são aplicadas pelo Spring Security às rotas web e às APIs. O cadast
 - `GET /api/clientes` — consulta clientes conforme perfil; `POST` e `PUT` cadastram/atualizam e geram auditoria.
 - `GET /api/usuarios` e demais rotas `/api/usuarios/**` — somente ADMIN; as respostas não incluem senha.
 - `GET /api/auditoria` — somente ADMIN/GERENTE; a tela de consulta está em `/auditoria`.
+- `GET /api/dashboard/**` — somente ADMIN/GERENTE; detalhes em `docs/DOCUMENTACAO.md`.
 
 Para compor o valor do pedido, envie `itens` com `nome` de produto cadastrado em Produtos e `quantidade`. O preço unitário enviado pelo cliente é ignorado: o servidor consulta o catálogo e calcula subtotal, desconto e total. Pedidos legados sem itens permanecem compatíveis, mas não recebem preço automaticamente.
 

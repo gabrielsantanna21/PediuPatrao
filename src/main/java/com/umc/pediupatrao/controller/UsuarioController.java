@@ -1,0 +1,12 @@
+package com.umc.pediupatrao.controller;
+import com.umc.pediupatrao.entity.Usuario; import com.umc.pediupatrao.service.UsuarioService; import org.springframework.http.*; import org.springframework.web.bind.annotation.*; import java.util.*;
+@RestController @RequestMapping("/api/usuarios") public class UsuarioController {
+ private final UsuarioService service; public UsuarioController(UsuarioService s){service=s;}
+ private Map<String,Object> seguro(Usuario u){Map<String,Object> m=new LinkedHashMap<>();m.put("id",u.getId());m.put("username",u.getUsername());m.put("role",u.getRole());return m;}
+ @GetMapping public List<Map<String,Object>> listarTodos(){List<Map<String,Object>> out=new ArrayList<>();service.listarTodos().forEach(u->out.add(seguro(u)));return out;}
+ @GetMapping("/{id}") public ResponseEntity<Map<String,Object>> buscar(@PathVariable String id){return service.buscarPorId(id).map(u->ResponseEntity.ok(seguro(u))).orElse(ResponseEntity.<Map<String,Object>>notFound().build());}
+ @PostMapping public ResponseEntity<Map<String,Object>> criar(@RequestBody Usuario u){if(u.getUsername()==null||u.getUsername().isBlank()||u.getPassword()==null||u.getPassword().isBlank())throw new IllegalArgumentException("Usuário e senha são obrigatórios.");validarRole(u.getRole());u.setId(null);service.salvarUsuario(u);return ResponseEntity.status(HttpStatus.CREATED).body(seguro(service.buscarPorUsername(u.getUsername()).orElseThrow()));}
+ @PutMapping("/{id}") public ResponseEntity<Map<String,Object>> atualizar(@PathVariable String id,@RequestBody Usuario dados){Usuario u=service.buscarPorId(id).orElseThrow(()->new NoSuchElementException("Usuário não encontrado"));if(dados.getUsername()!=null&&!dados.getUsername().isBlank())u.setUsername(dados.getUsername());if(dados.getRole()!=null){validarRole(dados.getRole());u.setRole(dados.getRole().toUpperCase(Locale.ROOT));}if(dados.getPassword()!=null&&!dados.getPassword().isBlank())u.setPassword(dados.getPassword());else u.setPassword(null);service.atualizarUsuario(id,u);return ResponseEntity.ok(seguro(service.buscarPorId(id).orElseThrow()));}
+ @DeleteMapping("/{id}") public ResponseEntity<Void> deletar(@PathVariable String id){service.deletarUsuario(id);return ResponseEntity.noContent().build();}
+ private void validarRole(String role){if(role==null||!Set.of("ADMIN","GERENTE","ATENDENTE").contains(role.toUpperCase(Locale.ROOT)))throw new IllegalArgumentException("Perfil inválido.");}
+}

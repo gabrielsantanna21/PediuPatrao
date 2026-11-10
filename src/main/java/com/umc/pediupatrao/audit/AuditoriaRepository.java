@@ -1,0 +1,1 @@
+package com.umc.pediupatrao.audit; import org.springframework.data.mongodb.repository.MongoRepository; public interface AuditoriaRepository extends MongoRepository<Auditoria,String> {}

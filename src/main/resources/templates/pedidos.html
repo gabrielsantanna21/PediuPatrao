@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Pedidos</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+
+<div th:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="bi bi-bag me-2 text-primary"></i>Pedidos
+        </h2>
+    </div>
+
+    <!-- Mensagens de feedback -->
+    <div class="alert alert-success alert-dismissible fade show" th:if="${sucesso}" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${sucesso}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div class="alert alert-danger alert-dismissible fade show" th:if="${erro}" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${erro}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Tabela -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Cliente ID</th>
+                        <th>Tipo de Pizza</th>
+                        <th>Sabor</th>
+                        <th>Quantidade</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>Ações (permissões validadas no servidor)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Lista vazia -->
+                    <tr th:if="${#lists.isEmpty(pedidos)}">
+                        <td colspan="8" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            Nenhum pedido encontrado.
+                        </td>
+                    </tr>
+                    <!-- Linhas -->
+                    <tr th:each="pedido : ${pedidos}">
+                        <td class="ps-4 text-muted" th:text="${pedido.id}"></td>
+                        <td th:text="${pedido.clienteId}"></td>
+                        <td th:text="${pedido.tipoPizza}"></td>
+                        <td th:text="${pedido.sabor}"></td>
+                        <td th:text="${pedido.quantidade}"></td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${pedido.status == 'ENTREGUE'} ? 'bg-success' :
+                                                  (${pedido.status == 'CANCELADO'} ? 'bg-danger' :
+                                                  (${pedido.status == 'EM_PREPARO'} ? 'bg-warning text-dark' : 'bg-secondary'))"
+                                  th:text="${pedido.status}">
+                            </span>
+                        </td>
+                        <td th:text="${pedido.valorTotal != null ? #numbers.formatDecimal(pedido.valorTotal, 1, 2) : '0,00'}"></td>
+                        <td class="text-nowrap">
+                            <select class="form-select form-select-sm d-inline-block w-auto status-pedido" th:attr="data-id=${pedido.id}">
+                                <option value="">Alterar status...</option><option>EM PREPARAÇÃO</option><option>PRONTO</option><option>SAIU PARA ENTREGA</option><option>RETIRADO</option><option>FINALIZADO</option>
+                            </select>
+                            <button type="button" class="btn btn-sm btn-outline-primary" th:attr="data-id=${pedido.id}" onclick="aplicarDesconto(this)">Desconto</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" th:attr="data-id=${pedido.id}" onclick="cancelarPedido(this)">Cancelar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer text-muted small" th:if="${!#lists.isEmpty(pedidos)}">
+            Total: <strong th:text="${#lists.size(pedidos)}"></strong> pedido(s)
+        </div>
+    </div>
+
+<script>
+function csrfHeaders(){const h=document.querySelector('meta[name="_csrf_header"]')?.content;const t=document.querySelector('meta[name="_csrf"]')?.content;const out={'Content-Type':'application/json'};if(h&&t)out[h]=t;return out;}
+async function enviar(url,body){const r=await fetch(url,{method:'POST',headers:csrfHeaders(),body:JSON.stringify(body)});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.erro||('Falha HTTP '+r.status));alert('Operação concluída. Atualize a página para ver os dados.');location.reload();}
+function aplicarDesconto(b){const p=prompt('Percentual de desconto (máximo 20):');if(p===null)return;enviar('/api/pedidos/'+b.dataset.id+'/desconto',{percentual:Number(p)}).catch(e=>alert(e.message));}
+function cancelarPedido(b){const j=prompt('Justificativa obrigatória para cancelamento:');if(j===null)return;enviar('/api/pedidos/'+b.dataset.id+'/cancelar',{justificativa:j}).catch(e=>alert(e.message));}
+document.querySelectorAll('.status-pedido').forEach(s=>s.addEventListener('change',async()=>{if(!s.value)return;try{const h=csrfHeaders();const r=await fetch('/api/pedidos/'+s.dataset.id+'/status?status='+encodeURIComponent(s.value),{method:'PUT',headers:h});if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.erro||('Falha HTTP '+r.status));}location.reload();}catch(e){alert(e.message);s.value='';}}));
+</script>
+</div>
+
+</body>
+</html>

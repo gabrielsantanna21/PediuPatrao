@@ -109,6 +109,17 @@ public class DemoDataGenerator {
                 out.add(pedido(catalogo, pesos, clienteIds, entrada, agora));
             }
         }
+        // Alguns pedidos em andamento "agora", para a demonstração da situação dos pedidos em qualquer horário.
+        String[] fluxo = {StatusPedido.RECEBIDO, StatusPedido.EM_PREPARACAO, StatusPedido.PRONTO, StatusPedido.EM_PREPARACAO};
+        long[] minutosAtras = {3, 14, 26, 55};
+        for (int k = 0; k < fluxo.length; k++) {
+            Pedido p = pedido(catalogo, pesos, clienteIds, agora.minusSeconds(minutosAtras[k] * 60), agora);
+            p.setStatus(fluxo[k]); // o último fica parado em preparação e aparece como atrasado
+            p.setDataHoraSaida(null);
+            p.setResponsavelSaida(null);
+            p.setJustificativaCancelamento(null);
+            out.add(p);
+        }
         return out;
     }
 

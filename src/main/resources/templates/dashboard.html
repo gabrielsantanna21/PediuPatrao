@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+
+<div th:fragment="content" class="dash-root" id="dashboard">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" href="/css/dashboard.css">
+
+    <!-- Cabeçalho -->
+    <header class="dash-header">
+        <div>
+            <h2 class="fw-bold mb-0"><i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard administrativo</h2>
+            <div class="dash-sub" id="dash-periodo-label">Carregando…</div>
+        </div>
+        <div class="dash-header-actions">
+            <span class="dash-sub" id="dash-atualizado" aria-live="polite"></span>
+            <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" role="switch" id="dash-auto" checked>
+                <label class="form-check-label small" for="dash-auto">Atualizar a cada 60 s</label>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="dash-refresh">
+                <i class="bi bi-arrow-clockwise"></i> Atualizar
+            </button>
+        </div>
+    </header>
+
+    <!-- RF05: Filtros -->
+    <form class="dash-filtros card" id="dash-filtros" novalidate>
+        <div class="dash-filtro">
+            <label for="f-periodo">Período</label>
+            <select id="f-periodo" class="form-select form-select-sm">
+                <option value="hoje">Hoje</option>
+                <option value="7">Últimos 7 dias</option>
+                <option value="30" selected>Últimos 30 dias</option>
+                <option value="90">Últimos 90 dias</option>
+                <option value="mes">Este mês</option>
+                <option value="mes-anterior">Mês passado</option>
+                <option value="custom">Personalizado</option>
+            </select>
+        </div>
+        <div class="dash-filtro">
+            <label for="f-inicio">De</label>
+            <input type="date" id="f-inicio" class="form-control form-control-sm">
+        </div>
+        <div class="dash-filtro">
+            <label for="f-fim">Até</label>
+            <input type="date" id="f-fim" class="form-control form-control-sm">
+        </div>
+        <div class="dash-filtro">
+            <label for="f-status">Status</label>
+            <select id="f-status" class="form-select form-select-sm"><option value="">Todos</option></select>
+        </div>
+        <div class="dash-filtro">
+            <label for="f-categoria">Categoria</label>
+            <select id="f-categoria" class="form-select form-select-sm"><option value="">Todas</option></select>
+        </div>
+        <div class="dash-filtro">
+            <label for="f-produto">Produto</label>
+            <select id="f-produto" class="form-select form-select-sm"><option value="">Todos</option></select>
+        </div>
+        <div class="dash-filtro dash-filtro-botoes">
+            <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-funnel"></i> Aplicar</button>
+            <button type="button" class="btn btn-link btn-sm" id="f-limpar">Limpar</button>
+        </div>
+        <div class="dash-filtro-erro" id="f-erro" role="alert" hidden></div>
+    </form>
+
+    <div class="alert alert-danger d-flex align-items-center gap-2" id="dash-erro-global" role="alert" hidden></div>
+
+    <!-- RF01: Indicadores gerais -->
+    <section class="dash-kpis" id="kpis" aria-label="Indicadores gerais" data-card>
+        <article class="kpi">
+            <span class="kpi-label">Faturamento</span>
+            <strong class="kpi-valor" id="kpi-faturamento">—</strong>
+            <span class="kpi-delta" id="kpi-faturamento-delta"></span>
+        </article>
+        <article class="kpi">
+            <span class="kpi-label">Pedidos</span>
+            <strong class="kpi-valor" id="kpi-pedidos">—</strong>
+            <span class="kpi-delta" id="kpi-pedidos-delta"></span>
+        </article>
+        <article class="kpi">
+            <span class="kpi-label">Ticket médio</span>
+            <strong class="kpi-valor" id="kpi-ticket">—</strong>
+            <span class="kpi-delta" id="kpi-ticket-delta"></span>
+        </article>
+        <article class="kpi">
+            <span class="kpi-label">Itens vendidos</span>
+            <strong class="kpi-valor" id="kpi-itens">—</strong>
+            <span class="kpi-nota" id="kpi-desconto"></span>
+        </article>
+        <article class="kpi">
+            <span class="kpi-label">Cancelamentos</span>
+            <strong class="kpi-valor" id="kpi-cancelados">—</strong>
+            <span class="kpi-nota" id="kpi-taxa"></span>
+        </article>
+        <article class="kpi">
+            <span class="kpi-label">Tempo médio de atendimento</span>
+            <strong class="kpi-valor" id="kpi-tempo">—</strong>
+            <span class="kpi-nota">da entrada à saída</span>
+        </article>
+    </section>
+
+    <!-- RF02: Análise de vendas -->
+    <div class="dash-grid">
+        <section class="card dash-card span-8" id="card-serie" data-card>
+            <div class="dash-card-head">
+                <div>
+                    <h3>Vendas no período</h3>
+                    <p class="dash-sub" id="serie-sub"></p>
+                </div>
+                <div class="dash-card-tools">
+                    <select id="serie-agrupamento" class="form-select form-select-sm" aria-label="Agrupamento">
+                        <option value="">Automático</option>
+                        <option value="DIA">Por dia</option>
+                        <option value="SEMANA">Por semana</option>
+                        <option value="MES">Por mês</option>
+                    </select>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Métrica do gráfico" id="serie-metrica">
+                        <button type="button" class="btn btn-outline-secondary active" data-metrica="faturamento">Faturamento</button>
+                        <button type="button" class="btn btn-outline-secondary" data-metrica="pedidos">Pedidos</button>
+                        <button type="button" class="btn btn-outline-secondary" data-metrica="ticketMedio">Ticket</button>
+                    </div>
+                </div>
+            </div>
+            <div class="dash-chart"><canvas id="chart-serie" role="img" aria-label="Gráfico de vendas no período"></canvas></div>
+        </section>
+
+        <section class="card dash-card span-4" id="card-categorias" data-card>
+            <div class="dash-card-head">
+                <div>
+                    <h3>Vendas por categoria</h3>
+                    <p class="dash-sub">Participação no faturamento</p>
+                </div>
+            </div>
+            <ul class="barras" id="lista-categorias"></ul>
+        </section>
+
+        <!-- RF03: Situação dos pedidos -->
+        <section class="card dash-card span-4" id="card-status" data-card>
+            <div class="dash-card-head">
+                <div>
+                    <h3>Situação dos pedidos</h3>
+                    <p class="dash-sub" id="status-sub"></p>
+                </div>
+            </div>
+            <div class="dash-alertas" id="status-alertas"></div>
+            <ul class="barras" id="lista-status"></ul>
+        </section>
+
+        <!-- RF04: Produtos mais vendidos -->
+        <section class="card dash-card span-8" id="card-ranking" data-card>
+            <div class="dash-card-head">
+                <div>
+                    <h3>Produtos mais vendidos</h3>
+                    <p class="dash-sub">Top 10 do período, sem pedidos cancelados</p>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="Ordenar ranking por" id="ranking-ordem">
+                    <button type="button" class="btn btn-outline-secondary active" data-ordem="QUANTIDADE">Quantidade</button>
+                    <button type="button" class="btn btn-outline-secondary" data-ordem="FATURAMENTO">Faturamento</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle dash-tabela mb-0">
+                    <thead>
+                    <tr>
+                        <th scope="col" class="num">#</th>
+                        <th scope="col">Produto</th>
+                        <th scope="col" class="d-none d-md-table-cell">Categoria</th>
+                        <th scope="col" class="num">Qtd.</th>
+                        <th scope="col" class="num">Faturamento</th>
+                        <th scope="col" class="w-25 d-none d-lg-table-cell">Participação</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tabela-ranking"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- RF02: Tendências por horário -->
+        <section class="card dash-card span-6" id="card-horarios" data-card>
+            <div class="dash-card-head">
+                <div>
+                    <h3>Movimento por horário</h3>
+                    <p class="dash-sub" id="horarios-sub"></p>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="Agrupar movimento por" id="horarios-modo">
+                    <button type="button" class="btn btn-outline-secondary active" data-modo="hora">Hora do dia</button>
+                    <button type="button" class="btn btn-outline-secondary" data-modo="dia">Dia da semana</button>
+                </div>
+            </div>
+            <div class="dash-chart dash-chart-sm"><canvas id="chart-horarios" role="img" aria-label="Gráfico de pedidos por horário"></canvas></div>
+        </section>
+
+        <!-- RF03: Últimos pedidos -->
+        <section class="card dash-card span-6" id="card-recentes" data-card>
+            <div class="dash-card-head">
+                <div>
+                    <h3>Últimos pedidos</h3>
+                    <p class="dash-sub">Os 8 mais recentes dentro dos filtros</p>
+                </div>
+                <a th:href="@{/pedidos}" href="/pedidos" class="btn btn-link btn-sm">Ver todos</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle dash-tabela mb-0">
+                    <thead>
+                    <tr>
+                        <th scope="col">Entrada</th>
+                        <th scope="col">Cliente / itens</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="num">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tabela-recentes"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <p class="dash-rodape">Faturamento considera o valor final (com desconto) de pedidos não cancelados.
+        Dados fornecidos pela API <code>/api/dashboard</code>.</p>
+
+    <script th:src="@{/plugins/chart.js/Chart.min.js}" src="/plugins/chart.js/Chart.min.js"></script>
+    <script th:src="@{/js/dashboard.js}" src="/js/dashboard.js"></script>
+</div>
+
+</body>
+</html>

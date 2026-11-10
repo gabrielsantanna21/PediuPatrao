@@ -21,7 +21,8 @@ login() { # $1 usuario $2 senha $3 arquivo-de-cookies
 }
 
 caso() { # $1 descrição  $2 status esperado  $3 cookies (ou -)  $4 caminho  [$5 método]
-  local metodo="${5:-GET}" args=(-s -o "$TMP/corpo.json" -w '%{http_code}' -X "$metodo" -H 'Accept: application/json')
+  local metodo="${5:-GET}"
+  local args=(-s -o "$TMP/corpo.json" -w '%{http_code}' -X "$metodo" -H 'Accept: application/json')
   [ "$3" != "-" ] && args+=(-b "$3")
   local status
   status=$(curl "${args[@]}" "$BASE$4")

@@ -468,11 +468,18 @@ PASS DemoDataGeneratorTest.pedidosGeradosSaoConsistentes
 Tests: 28, passed: 28, failed: 0
 ```
 
-> **Para a entrega:** rode `./mvnw test` na sua máquina e cole abaixo o trecho final do Maven (`Tests run: …, Failures: 0`). Ele inclui também os 10 testes de `DashboardControllerTest` e os 3 testes já existentes de `PedidoServiceTest`. Um print do terminal pode ir em `docs/evidencias/`.
->
-> ```
-> (colar aqui a saída do ./mvnw test)
-> ```
+Execução realizada em 10/11/2026 com `mvnw.cmd test`:
+
+```
+[INFO] Tests run: 17, Failures: 0, Errors: 0, Skipped: 0 -- in com.umc.pediupatrao.dashboard.DashboardCalculatorTest
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0 -- in com.umc.pediupatrao.dashboard.DashboardControllerTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0 -- in com.umc.pediupatrao.dashboard.DashboardFiltroTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0 -- in com.umc.pediupatrao.dashboard.DemoDataGeneratorTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0 -- in com.umc.pediupatrao.dashboard.StatusPedidoTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0 -- in com.umc.pediupatrao.service.PedidoServiceTest
+[INFO] Tests run: 41, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+```
 
 ### 7.3 Testes da API (camada web e integração)
 

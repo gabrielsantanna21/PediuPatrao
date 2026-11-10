@@ -1,0 +1,87 @@
+Testes da API do Dashboard — 10/11/2026 07:52:41 — http://localhost:8080
+
+[OK] Sem login retorna 401 em JSON
+      GET /api/dashboard/resumo  ->  HTTP 401 (esperado 401)
+      {"erro":"Não autenticado. Faça login para acessar a API.","status":401,"caminho":"/api/dashboard/resumo","timestamp":"2026-11-10T10:52:43.014926100Z"}
+
+[OK] ATENDENTE não acessa o dashboard (403)
+      GET /api/dashboard/resumo  ->  HTTP 403 (esperado 403)
+      {"erro":"Acesso negado para o seu perfil.","status":403,"caminho":"/api/dashboard/resumo","timestamp":"2026-11-10T10:52:43.140954400Z"}
+
+[OK] GERENTE: resumo padrão (últimos 30 dias)
+      GET /api/dashboard/resumo  ->  HTTP 200 (esperado 200)
+      {"filtros":{"inicio":"2026-10-12","fim":"2026-11-10","dias":30,"status":[],"categoria":null,"produto":null,"fusoHorario":"America/Sao_Paulo"},"geradoEm":"2026-11-10T10:52:43.504038800Z","dados":{"faturamento":46962.99,"totalPedidos":523,"pedidosValidos":488,"pedidosCancelados":35,"ticketMedio":96.24,"itensVendidos":2139,"descontoConcedido":448.81,"taxaCancelamentoPercentual":6.7,"pedidosEmAndament
+
+[OK] GERENTE: resumo de hoje
+      GET /api/dashboard/resumo?inicio=2026-11-10&fim=2026-11-10  ->  HTTP 200 (esperado 200)
+      {"filtros":{"inicio":"2026-11-10","fim":"2026-11-10","dias":1,"status":[],"categoria":null,"produto":null,"fusoHorario":"America/Sao_Paulo"},"geradoEm":"2026-11-10T10:52:43.730087300Z","dados":{"faturamento":534.62,"totalPedidos":4,"pedidosValidos":4,"pedidosCancelados":0,"ticketMedio":133.66,"itensVendidos":25,"descontoConcedido":9.48,"taxaCancelamentoPercentual":0.0,"pedidosEmAndamento":4,"tempo
+
+[OK] Série semanal
+      GET /api/dashboard/vendas/serie?agrupamento=SEMANA  ->  HTTP 200 (esperado 200)
+      {"filtros":{"inicio":"2026-10-12","fim":"2026-11-10","dias":30,"status":[],"categoria":null,"produto":null,"fusoHorario":"America/Sao_Paulo"},"geradoEm":"2026-11-10T10:52:43.915130400Z","dados":{"agrupamento":"SEMANA","pontos":[{"rotulo":"12/10–18/10","inicio":"2026-10-12","fim":"2026-10-18","faturamento":10911.71,"pedidos":108,"cancelados":12,"ticketMedio":101.03},{"rotulo":"19/10–25/10","ini
+
+[OK] Série mensal dos últimos 6 meses (auto)
+      GET /api/dashboard/vendas/serie?inicio=2026-05-14&fim=2026-11-10  ->  HTTP 200 (esperado 200)
+      {"filtros":{"inicio":"2026-05-14","fim":"2026-11-10","dias":181,"status":[],"categoria":null,"produto":null,"fusoHorario":"America/Sao_Paulo"},"geradoEm":"2026-11-10T10:52:44.315220300Z","dados":{"agrupamento":"MES","pontos":[{"rotulo":"05/2026","inicio":"2026-05-14","fim":"2026-05-31","faturamento":0.00,"pedidos":0,"cancelados":0,"ticketMedio":0.00},{"rotulo":"06/2026","inicio":"2026-06-01","fim"
+
+[OK] Vendas por categoria
+      GET /api/dashboard/vendas/categorias  ->  HTTP 200 (esperado 200)
+      {"filtros":{"inicio":"2026-10-12","fim":"2026-11-10","dias":30,"status":[],"categoria":null,"produto":null,"fusoHorario":"America/Sao_Paulo"},"geradoEm":"2026-11-10T10:52:44.500262500Z","dados":[{"categoria":"Pizza","quantidade":635,"faturamento":33178.75,"percentualFaturamento":70.6},{"categoria":"Esfiha","quantidade":1159,"faturamento":7715.99,"percentualFaturamento":16.4},{"categoria":"Lanche",
+
+[OK] Horários de pico
+      GET /api/dashboard/vendas/horarios  ->  HTTP 200 (esperado 200)
+      {"filtros":{"inicio":"2026-10-12","fim":"2026-11-10","dias":30,"status":[],"categoria":null,"produto":null,"fusoHorario":"America/Sao_Paulo"},"geradoEm":"2026-11-10T10:52:44.686305100Z","dados":{"porHora":[{"hora":0,"pedidos":0,"faturamento":0.00},{"hora":1,"pedidos":0,"faturamento":0.00},{"hora":2,"pedidos":0,"faturamento":0.00},{"hora":3,"pedidos":0,"faturamento":0.00},{"hora":4,"pedidos":0,"fat
+
+[OK] Situação dos pedidos (limite de atraso 30 min)
+      GET /api/dashboard/pedidos/situacao?limiteAtrasoMin=30  ->  HTTP 200 (esperado 200)
+      {"filtros":{"inicio":"2026-10-12","fim":"2026-11-10","dias":30,"status":[],"categoria":null,"produto":null,"fusoHorario":"America/Sao_Paulo"},"geradoEm":"2026-11-10T10:52:44.853342300Z","dados":{"porStatus":[{"status":"RECEBIDO","quantidade":1,"percentual":0.2,"valor":180.12},{"status":"EM PREPARAÇÃO","quantidade":2,"percentual":0.4,"valor":103.80},{"status":"PRONTO","quantidade":1,"percentual":
+
+[OK] Últimos 5 pedidos
+      GET /api/dashboard/pedidos/recentes?limite=5  ->  HTTP 200 (esperado 200)
+      {"filtros":{"inicio":"2026-10-12","fim":"2026-11-10","dias":30,"status":[],"categoria":null,"produto":null,"fusoHorario":"America/Sao_Paulo"},"geradoEm":"2026-11-10T10:52:45.046386700Z","dados":[{"id":"6af2f691a8b38667d00e37a3","cliente":"João Pereira","status":"RECEBIDO","valorTotal":180.12,"itens":"1x X-Salada, 2x Pizza Portuguesa, 1x Pizza Margherita","quantidadeItens":4,"dataHoraEntrada":"202
+
+[OK] Ranking por faturamento (top 5)
+      GET /api/dashboard/produtos/ranking?limite=5&ordenarPor=FATURAMENTO  ->  HTTP 200 (esperado 200)
+      {"filtros":{"inicio":"2026-10-12","fim":"2026-11-10","dias":30,"status":[],"categoria":null,"produto":null,"fusoHorario":"America/Sao_Paulo"},"geradoEm":"2026-11-10T10:52:45.230428200Z","dados":[{"posicao":1,"produto":"Pizza Calabresa","categoria":"Pizza","quantidade":160,"faturamento":7886.67,"pedidos":130,"participacaoPercentual":16.8},{"posicao":2,"produto":"Pizza Portuguesa","categoria":"Pizza
+
+[OK] Filtro por categoria e status
+      GET /api/dashboard/resumo?categoria=Pizza&status=FINALIZADO,RETIRADO  ->  HTTP 200 (esperado 200)
+      {"filtros":{"inicio":"2026-10-12","fim":"2026-11-10","dias":30,"status":["FINALIZADO","RETIRADO"],"categoria":"Pizza","produto":null,"fusoHorario":"America/Sao_Paulo"},"geradoEm":"2026-11-10T10:52:45.446478Z","dados":{"faturamento":41104.72,"totalPedidos":364,"pedidosValidos":364,"pedidosCancelados":0,"ticketMedio":112.93,"itensVendidos":629,"descontoConcedido":416.08,"taxaCancelamentoPercentual":
+
+[OK] Opções de filtro
+      GET /api/dashboard/filtros  ->  HTTP 200 (esperado 200)
+      {"status":["RECEBIDO","EM PREPARAÇÃO","PRONTO","SAIU PARA ENTREGA","RETIRADO","FINALIZADO","CANCELADO"],"categorias":["Bebida","Esfiha","Lanche","Pizza"],"produtos":["Esfiha de Calabresa","Esfiha de Carne","Esfiha de Queijo","Guaraná 2L","Pizza Calabresa","Pizza Frango com Catupiry","Pizza Margherita","Pizza Mussarela","Pizza Portuguesa","Pizza Quatro Queijos","Refrigerante 2L","Suco Natural 50
+
+[OK] Data em formato inválido (400)
+      GET /api/dashboard/resumo?inicio=10/11/2026  ->  HTTP 400 (esperado 400)
+      {"erro":"Parâmetro 'inicio' inválido: '10/11/2026'. Use o formato AAAA-MM-DD (ex.: 2026-11-10).","status":400,"caminho":"/api/dashboard/resumo","timestamp":"2026-11-10T10:52:45.719538500Z"}
+
+[OK] Período invertido (400)
+      GET /api/dashboard/resumo?inicio=2026-11-10&fim=2026-11-01  ->  HTTP 400 (esperado 400)
+      {"erro":"Período inválido: a data final (2026-11-01) é anterior à data inicial (2026-11-10).","status":400,"caminho":"/api/dashboard/resumo","timestamp":"2026-11-10T10:52:45.835565700Z"}
+
+[OK] Período maior que 366 dias (400)
+      GET /api/dashboard/resumo?inicio=2024-01-01&fim=2026-11-10  ->  HTTP 400 (esperado 400)
+      {"erro":"Período muito longo (1045 dias). O máximo permitido é 366 dias.","status":400,"caminho":"/api/dashboard/resumo","timestamp":"2026-11-10T10:52:45.946590400Z"}
+
+[OK] Status inexistente (400)
+      GET /api/dashboard/pedidos/situacao?status=PERDIDO  ->  HTTP 400 (esperado 400)
+      {"erro":"Status inválido: 'PERDIDO'. Valores aceitos: RECEBIDO, EM PREPARAÇÃO, PRONTO, SAIU PARA ENTREGA, RETIRADO, FINALIZADO, CANCELADO.","status":400,"caminho":"/api/dashboard/pedidos/situacao","timestamp":"2026-11-10T10:52:46.058615900Z"}
+
+[OK] Agrupamento inválido (400)
+      GET /api/dashboard/vendas/serie?agrupamento=ANO  ->  HTTP 400 (esperado 400)
+      {"erro":"Agrupamento inválido: 'ANO'. Use DIA, SEMANA ou MES.","status":400,"caminho":"/api/dashboard/vendas/serie","timestamp":"2026-11-10T10:52:46.175642900Z"}
+
+[OK] Limite fora da faixa (400)
+      GET /api/dashboard/produtos/ranking?limite=100  ->  HTTP 400 (esperado 400)
+      {"erro":"Parâmetro 'limite' deve estar entre 1 e 50.","status":400,"caminho":"/api/dashboard/produtos/ranking","timestamp":"2026-11-10T10:52:46.346681900Z"}
+
+[OK] Limite não numérico (400)
+      GET /api/dashboard/produtos/ranking?limite=abc  ->  HTTP 400 (esperado 400)
+      {"erro":"Parâmetro 'limite' inválido: 'abc'.","status":400,"caminho":"/api/dashboard/produtos/ranking","timestamp":"2026-11-10T10:52:46.459707100Z"}
+
+[OK] API é somente leitura: POST bloqueado (403)
+      POST /api/dashboard/resumo  ->  HTTP 403 (esperado 403)
+      {"erro":"Acesso negado para o seu perfil.","status":403,"caminho":"/api/dashboard/resumo","timestamp":"2026-11-10T10:52:46.582735300Z"}
+
+Resumo: 21 OK, 0 falha(s).

@@ -70,10 +70,12 @@ public class DemoDataSeeder implements CommandLineRunner {
     }
 
     private void criarUsuarioDemo(String username, String role) {
-        if (usuarios.findByUsername(username).isPresent()) {
+        Usuario u = usuarios.findByUsername(username).orElseGet(Usuario::new);
+        if (u.getUsername() != null && role.equals(u.getRole())
+                && encoder.matches(System.getenv().getOrDefault("PEDIUPATRAO_DEMO_PASSWORD", "demo123"),
+                        u.getPassword())) {
             return;
         }
-        Usuario u = new Usuario();
         u.setUsername(username);
         u.setRole(role);
         u.setPassword(encoder.encode(System.getenv().getOrDefault("PEDIUPATRAO_DEMO_PASSWORD", "demo123")));

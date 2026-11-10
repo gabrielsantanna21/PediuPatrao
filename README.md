@@ -7,7 +7,6 @@ Painel em `/dashboard` (perfis ADMIN e GERENTE) com indicadores de vendas, gráf
 
 - **Documentação completa** (requisitos, decisões de projeto, endpoints, evidências de testes): [`docs/DOCUMENTACAO.md`](docs/DOCUMENTACAO.md)
 - **Teste da API contra a aplicação rodando:** `./docs/testes/testar-api.sh`
-- **Roteiro do vídeo (3 min):** [`docs/ROTEIRO_VIDEO_DASHBOARD.md`](docs/ROTEIRO_VIDEO_DASHBOARD.md)
 - **Dados de demonstração:** inicie com `PEDIUPATRAO_DEMO_DATA=true` (só popula se não houver pedidos; cria `gerente`/`atendente` com senha `demo123`).
 
 | Endpoint | Finalidade |

@@ -5,6 +5,7 @@ Projeto Spring Boot 3.4 / Java 21, Thymeleaf e MongoDB. Esta versão amplia a ap
 ## Dashboard administrativo (v1.1.0)
 Painel em `/dashboard` (perfis ADMIN e GERENTE) com indicadores de vendas, gráficos, situação dos pedidos, produtos mais vendidos e filtros, alimentado pela API `GET /api/dashboard/**`.
 
+- **Vídeo de demonstração:** [`docs/PediuPatrao_video_dash.mp4`](docs/PediuPatrao_video_dash.mp4)
 - **Documentação completa** (requisitos, decisões de projeto, endpoints, evidências de testes): [`docs/DOCUMENTACAO.md`](docs/DOCUMENTACAO.md)
 - **Teste da API contra a aplicação rodando:** `./docs/testes/testar-api.sh`
 - **Dados de demonstração:** inicie com `PEDIUPATRAO_DEMO_DATA=true` (só popula se não houver pedidos; cria `gerente`/`atendente` com senha `demo123`).

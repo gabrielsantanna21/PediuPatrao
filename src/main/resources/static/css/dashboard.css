@@ -1,0 +1,130 @@
+/* Dashboard administrativo — Pediu Patrão */
+
+/* O <main> do layout é item flex ao lado da sidebar: precisa crescer para os gráficos ocuparem a largura. */
+main.container-fluid { flex: 1 1 auto; min-width: 0; padding-bottom: 2rem; }
+
+.dash-root {
+    --surface-1: #ffffff;
+    --surface-2: #f6f6f4;
+    --border: #e4e3df;
+    --grid: #ecebe7;
+    --text-primary: #1b1b1a;
+    --text-secondary: #52514e;
+    --text-muted: #6f6e69;
+    --series-1: #2a78d6;
+    --series-1-soft: rgba(42, 120, 214, 0.12);
+    --track: #eceae5;
+    --good: #0ca30c;
+    --warning: #fab219;
+    --critical: #d03b3b;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.dash-header {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end;
+    gap: .75rem; margin-bottom: 1rem;
+}
+.dash-header-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.dash-sub { color: var(--text-muted); font-size: .85rem; margin: 0; }
+
+/* Filtros */
+.dash-root [hidden] { display: none !important; }
+
+.dash-filtros {
+    display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-end; gap: .75rem;
+    padding: .75rem 1rem; margin-bottom: 1rem; border-color: var(--border);
+}
+.dash-filtro { display: flex; flex-direction: column; gap: .2rem; min-width: 130px; flex: 1 1 130px; }
+.dash-filtro label { font-size: .75rem; color: var(--text-secondary); font-weight: 600; }
+.dash-filtro-botoes { flex-direction: row; align-items: center; flex: 0 0 auto; min-width: 0; }
+.dash-filtro-erro { flex-basis: 100%; color: var(--critical); font-size: .85rem; }
+
+/* KPIs */
+.dash-kpis {
+    display: grid; gap: .75rem; margin-bottom: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.kpi {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: .5rem;
+    padding: .85rem 1rem; display: flex; flex-direction: column; gap: .15rem; min-width: 0;
+}
+.kpi-label { font-size: .78rem; color: var(--text-secondary); font-weight: 600; }
+.kpi-valor { font-size: clamp(1.15rem, 1.6vw, 1.5rem); line-height: 1.2; font-weight: 700; white-space: nowrap; }
+.kpi-delta, .kpi-nota { font-size: .78rem; color: var(--text-muted); min-height: 1.1em; }
+.kpi-delta i { margin-right: .15rem; }
+.kpi-delta .up { color: var(--good); }
+.kpi-delta .down { color: var(--critical); }
+
+/* Grade de cartões */
+.dash-grid { display: grid; gap: 1rem; grid-template-columns: repeat(12, minmax(0, 1fr)); }
+.dash-card { padding: 1rem; border-color: var(--border); min-width: 0; position: relative; }
+.span-8 { grid-column: span 8; }
+.span-6 { grid-column: span 6; }
+.span-4 { grid-column: span 4; }
+@media (max-width: 1199px) {
+    .span-8, .span-6, .span-4 { grid-column: span 12; }
+}
+.dash-card-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: .5rem; margin-bottom: .75rem; }
+.dash-card-head h3 { font-size: 1rem; font-weight: 700; margin: 0; }
+.dash-card-tools { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.dash-card-tools .form-select { width: auto; }
+
+.dash-chart { position: relative; height: 290px; }
+.dash-chart-sm { height: 240px; }
+
+/* Listas de barras (categorias / status) */
+.barras { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .65rem; }
+.barra-linha { display: grid; grid-template-columns: 1fr auto; gap: .1rem .75rem; font-size: .85rem; }
+.barra-nome { color: var(--text-primary); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.barra-valor { color: var(--text-secondary); text-align: right; white-space: nowrap; }
+.barra-trilho { grid-column: 1 / -1; height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; }
+.barra-fill { height: 100%; background: var(--series-1); border-radius: 0 4px 4px 0; min-width: 2px; transition: width .4s ease; }
+.barra-linha.zero .barra-nome { color: var(--text-muted); font-weight: 500; }
+.barra-linha.zero .barra-fill { min-width: 0; }
+
+/* Alertas de status */
+.dash-alertas { display: flex; flex-direction: column; gap: .4rem; margin-bottom: .75rem; }
+.dash-alerta { display: flex; align-items: center; gap: .5rem; font-size: .85rem; padding: .45rem .65rem; border-radius: .4rem; background: var(--surface-2); }
+.dash-alerta i.warning { color: #b47d00; }
+.dash-alerta i.good { color: var(--good); }
+
+/* Tabelas */
+.dash-tabela { font-size: .85rem; }
+.dash-tabela th { color: var(--text-secondary); font-weight: 600; font-size: .75rem; border-bottom-color: var(--border); white-space: nowrap; }
+.dash-tabela td { border-bottom-color: var(--grid); }
+.dash-tabela .num { text-align: right; white-space: nowrap; }
+.dash-tabela .itens { color: var(--text-muted); font-size: .78rem; max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini-trilho { height: 6px; background: var(--track); border-radius: 3px; overflow: hidden; }
+.mini-fill { height: 100%; background: var(--series-1); border-radius: 0 3px 3px 0; }
+
+.st { display: inline-flex; align-items: center; gap: .3rem; font-size: .75rem; font-weight: 600; white-space: nowrap; color: var(--text-secondary); }
+.st i { font-size: .8rem; }
+.st-andamento i { color: var(--series-1); }
+.st-ok i { color: var(--good); }
+.st-cancelado i { color: var(--critical); }
+.st-atraso { color: #8a5d00; }
+.st-atraso i { color: #b47d00; }
+
+/* Estados: carregando, vazio, erro */
+[data-card].carregando::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit;
+    background: rgba(255, 255, 255, .55);
+}
+.dash-kpis.carregando { position: relative; }
+.dash-vazio, .dash-falha { color: var(--text-muted); font-size: .85rem; text-align: center; padding: 1.5rem .5rem; }
+.dash-falha { color: var(--critical); }
+.dash-falha button { margin-top: .4rem; }
+.dash-chart .dash-vazio, .dash-chart .dash-falha { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface-1); }
+
+.dash-rodape { color: var(--text-muted); font-size: .75rem; margin-top: 1rem; }
+
+@media (max-width: 767px) {
+    .dash-header { padding-left: 3.25rem; } /* espaço para o botão de menu do layout */
+}
+@media (max-width: 575px) {
+    .dash-filtro { flex-basis: 45%; }
+    .dash-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .kpi { padding: .7rem .75rem; }
+    .kpi-valor { font-size: 1.15rem; }
+}
